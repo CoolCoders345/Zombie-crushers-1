@@ -6,34 +6,66 @@ const Constraint = Matter.Constraint;
 const Body = Matter.Body;
 const Composites = Matter.Composites;
 const Composite = Matter.Composite;
-var bridge
-var ground, wallR, wallL
-var link
 
-var stones  = []
-function setup() {
-  createCanvas(windowWidth, windowHeight);
+let engine;
+let world;
+var ground;
+var fruit,rope;
+var fruit_con;
+var button
+var bg_img;
+var food;
+var rabbit;
+var bunny
+function preload()
+{
+  bg_img = loadImage('background.png');
+  food = loadImage('melon.png');
+  rabbit = loadImage('Rabbit-01.png');
+}
+
+function setup() 
+{
+  createCanvas(500,700);
+  frameRate(80);
   engine = Engine.create();
   world = engine.world;
-  frameRate(80);
-bridge =new Bridge(30,{x:150,y:windowHeight/2})
-ground = new Base(windowWidth/2, windowHeight-10,windowWidth,10)
-wallR = new Base(10,windowHeight/2,300,100)
-wallL = new Base(2000,windowHeight/2,300,100)
-link = new Link(bridge, wallL)
+  ground = new Ground(200,680,600,20);
+  button = createImg("cut_button.png")
+  button.position(225,30)
+  button.size(50,50)
+  button.mouseClicked(drop)
+bunny = createSprite(250,600)
+bunny.addImage(rabbit)
+bunny.scale = 0.35
+  rope = new Rope(7,{x:245,y:30});
+  fruit = Bodies.circle(300,300,20);
+  Matter.Composite.add(rope.body,fruit);
+
+  fruit_con = new Link(rope,fruit);
+
+  rectMode(CENTER);
+  ellipseMode(RADIUS);
+  textSize(50)
+  imageMode(CENTER);
+  
 }
 
-function draw() {
+function draw() 
+{
   background(51);
+
+  image(bg_img,width/2,height/2,490,690);
+
+  image(food,fruit.position.x,fruit.position.y,70,70);
+  rope.show();
   Engine.update(engine);
-  bridge.show()
-  ground.show()
-  wallR.show()
-  wallL.show()
-  for (var i = 0; i<=8;i++){
-    var x =  random (width/2-200,width/2+300);
-    var y = random (-10,140);
-    var stone = new Stone(x, y, 80,80)
-    stones.push(stone)
-  }
+  ground.show();
+
+ 
+   drawSprites()
 }
+ function drop(){
+rope.break()
+fruit_con.detach()
+ }
